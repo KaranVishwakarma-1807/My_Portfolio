@@ -466,7 +466,7 @@ function initPageModules() {
 
   if (document.getElementById('typing-text')) {
     initTypingAnimator(
-      ['Android Developer', 'Cloud Engineer', 'AI/CV Builder', 'Python Developer'],
+      ['Android Developer - Learning', 'Cloud Engineer', 'AI/CV Builder', 'Python Developer'],
       100,
       60,
       1800
