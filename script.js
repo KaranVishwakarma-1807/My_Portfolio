@@ -485,7 +485,7 @@ function initPageModules() {
 initFilterController();
 initPageModules();
 
-// === SPA NAVIGATION (keeps audio playing between home ↔ blogs) ===
+// === SPA NAVIGATION (keeps audio playing between home and blogs) ===
 function shouldSwapPage(url) {
   return getPageKey(location.pathname) !== getPageKey(url.pathname);
 }
