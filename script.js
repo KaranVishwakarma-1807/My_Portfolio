@@ -1,4 +1,4 @@
-﻿// === SCROLL PROGRESS BAR ===
+// === SCROLL PROGRESS BAR ===
 function computeScrollPercent(scrollY, maxScroll) {
   return (Math.min(scrollY, maxScroll) / maxScroll) * 100;
 }
@@ -90,6 +90,15 @@ function initTypingAnimator(roles, typeSpeed, deleteSpeed, pauseMs) {
 // === FADE-IN ON SCROLL ===
 let fadeObserver = null;
 
+function hexToRgb(hex) {
+  const clean = hex.replace(/^#/, '');
+  const bigint = parseInt(clean, 16);
+  const r = (bigint >> 16) & 255;
+  const g = (bigint >> 8) & 255;
+  const b = bigint & 255;
+  return `${r}, ${g}, ${b}`;
+}
+
 function initFadeIn() {
   if (fadeObserver) fadeObserver.disconnect();
   fadeObserver = new IntersectionObserver((entries) => {
@@ -176,10 +185,20 @@ function initHeroCanvas() {
   }
 
   function getThemeColor(prop) {
-    return getComputedStyle(document.documentElement)
-      .getPropertyValue(prop)
-      .trim();
-  }
+  return getComputedStyle(document.documentElement)
+    .getPropertyValue(prop)
+    .trim();
+}
+
+// Convert hex color to rgb string for canvas rgba usage
+function hexToRgb(hex) {
+  const clean = hex.replace(/^#/, '');
+  const bigint = parseInt(clean, 16);
+  const r = (bigint >> 16) & 255;
+  const g = (bigint >> 8) & 255;
+  const b = bigint & 255;
+  return `${r}, ${g}, ${b}`;
+}
 
   const PARTICLE_COUNT = 40;
 
@@ -194,12 +213,41 @@ function initHeroCanvas() {
     };
   }
 
+  // Shooting star configuration
+  const SHOOTING_STAR_MIN_INTERVAL = 5000; // 1 seconds
+  const SHOOTING_STAR_MAX_INTERVAL = 10000; // 2 seconds
+  const SHOOTING_STAR_SPEED = 15; // pixels per frame
+  const SHOOTING_STAR_TTL = 5000; // ms lifespan
+
+  // Shooting star state
+  const shootingStars = [];
+
+  function spawnShootingStar() {
+    const startX = canvasWidth; // start at right edge
+    const startY = Math.random() * canvasHeight * 0.5; // upper half
+    const angle = Math.PI * 0.25; // 45 degrees down-left
+    shootingStars.push({
+      x: startX,
+      y: startY,
+      vx: -SHOOTING_STAR_SPEED * Math.cos(angle),
+      vy: SHOOTING_STAR_SPEED * Math.sin(angle),
+      created: performance.now(),
+    });
+    const nextDelay = Math.random() * (SHOOTING_STAR_MAX_INTERVAL - SHOOTING_STAR_MIN_INTERVAL) + SHOOTING_STAR_MIN_INTERVAL;
+    setTimeout(spawnShootingStar, nextDelay);
+  }
+
+  // Start first shooting star after initial delay
+
+
   resizeCanvas();
   window.addEventListener('resize', resizeCanvas);
 
   for (let i = 0; i < PARTICLE_COUNT; i++) {
     particles.push(createParticle());
   }
+  // Initiate shooting star generation
+  spawnShootingStar();
 
   let animFrameId = null;
 
@@ -227,7 +275,30 @@ function initHeroCanvas() {
       ctx.fill();
     }
 
+    // Draw shooting stars
+    const now = performance.now();
+    shootingStars.forEach((star, i) => {
+      // Update position
+      star.x += star.vx;
+      star.y += star.vy;
+      // Calculate life progress for fading
+      const age = now - star.created;
+      const progress = age / SHOOTING_STAR_TTL;
+      if (progress >= 1) {
+        shootingStars.splice(i, 1);
+        return;
+      }
+      const alpha = 1 - progress; // fade out
+      ctx.beginPath();
+      ctx.moveTo(star.x, star.y);
+      ctx.lineTo(star.x - star.vx * 4, star.y - star.vy * 4); // short tail
+      ctx.strokeStyle = `rgba(${hexToRgb(getThemeColor('--accent'))}, ${alpha})`;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    });
+
     ctx.globalAlpha = 1;
+
     animFrameId = requestAnimationFrame(draw);
   }
 
