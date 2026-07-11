@@ -1,4 +1,4 @@
-// === SCROLL PROGRESS BAR ===
+﻿// Scroll progress bar
 function computeScrollPercent(scrollY, maxScroll) {
   return (Math.min(scrollY, maxScroll) / maxScroll) * 100;
 }
@@ -12,7 +12,7 @@ window.addEventListener('scroll', () => {
   }
 });
 
-// === BACK TO TOP ===
+// Button for back to top action
 function computeBackToTopVisibility(scrollY) {
   return scrollY > 400;
 }
@@ -33,7 +33,7 @@ if (backToTopBtn) {
   });
 }
 
-// === TYPING ANIMATION ===
+// Typing animation
 let typingSession = 0;
 
 function simulateTypingCycle(roles) {
@@ -87,7 +87,7 @@ function initTypingAnimator(roles, typeSpeed, deleteSpeed, pauseMs) {
   setTimeout(tick, pauseMs);
 }
 
-// === FADE-IN ON SCROLL ===
+// Fade-In transition effect on scroll
 let fadeObserver = null;
 
 function hexToRgb(hex) {
@@ -107,7 +107,7 @@ function initFadeIn() {
   document.querySelectorAll('.fade-in').forEach(el => fadeObserver.observe(el));
 }
 
-// === DARK MODE ===
+// Dark mode implementation
 const html = document.documentElement;
 
 function setTheme(dark) {
@@ -130,7 +130,7 @@ document.addEventListener('click', (e) => {
   }
 });
 
-// === HERO CANVAS ===
+// Hero canvas related stuff
 let heroCleanup = null;
 
 function initHeroCanvas() {
@@ -190,7 +190,8 @@ function initHeroCanvas() {
     .trim();
 }
 
-// Convert hex color to rgb string for canvas rgba usage
+// Convert hex color to rgb string for canvas rgba usage - i don't understand the maths completely because for this i have used references and documentations
+// but basically what it does is that it converts this -> "#FF5733" (the hexadecimal form)  into  this -> "255, 87, 51" (the simple rgb string)
 function hexToRgb(hex) {
   const clean = hex.replace(/^#/, '');
   const bigint = parseInt(clean, 16);
@@ -200,6 +201,7 @@ function hexToRgb(hex) {
   return `${r}, ${g}, ${b}`;
 }
 
+  // this is to create particles / particle effects
   const PARTICLE_COUNT = 40;
 
   function createParticle() {
@@ -238,7 +240,6 @@ function hexToRgb(hex) {
   }
 
   // Start first shooting star after initial delay
-
 
   resizeCanvas();
   window.addEventListener('resize', resizeCanvas);
@@ -363,7 +364,7 @@ function initFilterController() {
   });
 }
 
-// === CARD EXPANDER ===
+// project card expander function
 function toggleCard(state) {
   const expanded = !state.expanded;
   return { expanded, ariaExpanded: String(expanded) };
@@ -388,7 +389,7 @@ document.addEventListener('click', (e) => {
   }
 });
 
-// === SOUND TOGGLE (persistent across in-site navigation) ===
+// sound toggle button which also keep it presistent across all pages (i only have main (home page) and a blog page)
 const cozyTrack = document.getElementById('background-music');
 let soundEnabled = false;
 let audioReady = false;
@@ -468,7 +469,7 @@ function initSoundToggle() {
 
 initSoundToggle();
 
-// === CUSTOM CURSOR ===
+// code for the custom cursor taken from stackoverflow but didn't actually used it because idk what custom cursor should i use...
 function initCustomCursor() {
   if ('ontouchstart' in window || navigator.maxTouchPoints > 0) return;
 
@@ -509,7 +510,7 @@ function initCustomCursor() {
 
 initCustomCursor();
 
-// === PAGE MODULES (re-run after in-site page swap) ===
+// page module function - to handle dynamic nav link highlighting for better UI/UX experience.
 function getPageKey(pathname) {
   const file = pathname.split('/').pop() || '';
   return file === 'blogs.html' ? 'blogs' : 'home';
@@ -556,7 +557,7 @@ function initPageModules() {
 initFilterController();
 initPageModules();
 
-// === SPA NAVIGATION (keeps audio playing between home and blogs) ===
+// SPA navigation - to keep the audio same in home page and blog page
 function shouldSwapPage(url) {
   return getPageKey(location.pathname) !== getPageKey(url.pathname);
 }

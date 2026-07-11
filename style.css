@@ -50,7 +50,7 @@ body {
   transition: background 0.3s, color 0.3s;
 }
 
-/* SKIP TO MAIN */
+/* for skip to main transition */
 .skip-to-main {
   position: absolute;
   top: -40px;
@@ -69,7 +69,7 @@ body {
   top: 0;
 }
 
-/* FOCUS-VISIBLE STYLES */
+/* to focus on the visibility styles */
 button:focus-visible,
 a:focus-visible {
   outline: 3px solid var(--accent);
@@ -85,7 +85,7 @@ a:focus-visible {
   outline-offset: -2px;
 }
 
-/* SCROLL PROGRESS BAR */
+/* scroll progress bar */
 #scroll-progress {
   position: fixed;
   top: 0;
@@ -97,7 +97,7 @@ a:focus-visible {
   transition: width 0.1s linear;
 }
 
-/* NAV */
+/* nav bar */
 nav {
   position: fixed;
   top: 16px;
@@ -238,7 +238,7 @@ nav {
 
 #sound-toggle svg { width: 20px; height: 20px; }
 
-/* LAYOUT */
+/* overall layout */
 main { padding-top: 88px; }
 section { padding: 5rem clamp(1.5rem, 8vw, 8rem); }
 
@@ -251,7 +251,7 @@ section { padding: 5rem clamp(1.5rem, 8vw, 8rem); }
   margin-bottom: 2rem;
 }
 
-/* HERO */
+/* hero */
 #hero {
   min-height: calc(100vh - 58px);
   display: flex;
@@ -263,7 +263,7 @@ section { padding: 5rem clamp(1.5rem, 8vw, 8rem); }
   overflow: hidden;
 }
 
-/* HERO CANVAS */
+/* hero's canvas */
 #hero-canvas {
   position: absolute;
   inset: 0;
@@ -322,7 +322,7 @@ h1 span { font-weight: 500; }
   font-weight: 300;
 }
 
-/* TYPING CURSOR */
+/* for typing cursor effect */
 .typing-cursor {
   animation: blink 0.7s step-end infinite;
 }
@@ -405,17 +405,17 @@ h1 span { font-weight: 500; }
 .hero-link:hover { color: var(--text-primary); }
 .hero-link svg { width: 15px; height: 15px; }
 
-/* DIVIDER */
+/* the dividers */
 .divider {
   border: none;
   border-top: 1px solid var(--border);
   margin: 0;
 }
 
-/* PROJECTS */
+/* for project cards */
 #projects { background: var(--surface); }
 
-/* FILTER BAR */
+/* project filter bar */
 .filter-bar {
   display: flex;
   flex-direction: row;
@@ -448,7 +448,7 @@ h1 span { font-weight: 500; }
   border-color: var(--accent);
 }
 
-/* HIDDEN PROJECT CARD (filter) */
+/* hidden project card filter */
 .project-card.hidden {
   opacity: 0;
   transform: scale(0.97);
@@ -541,7 +541,7 @@ h1 span { font-weight: 500; }
 .project-link:hover { gap: 8px; }
 .project-link svg { width: 13px; height: 13px; }
 
-/* CARD EXPANDER */
+/* project card expander */
 .card-detail {
   max-height: 0;
   overflow: hidden;
@@ -552,7 +552,7 @@ h1 span { font-weight: 500; }
   max-height: 400px;
 }
 
-/* SKILLS */
+/* skills */
 #skills { background: var(--bg); }
 
 .skills-layout {
@@ -621,7 +621,7 @@ h1 span { font-weight: 500; }
   font-weight: 300;
 }
 
-/* EDUCATION TIMELINE */
+/* education section and the timeline effect */
 #education { background: var(--surface); }
 
 .timeline {
@@ -693,7 +693,7 @@ h1 span { font-weight: 500; }
 }
 
 
-/* CONTACT */
+/* contact section */
 #contact { background: var(--surface); }
 
 .contact-inner { max-width: 540px; }
@@ -744,7 +744,7 @@ h1 span { font-weight: 500; }
 
 .contact-icon svg { width: 16px; height: 16px; }
 
-/* FOOTER */
+/* the footer */
 footer {
   padding: 2rem clamp(1.5rem, 8vw, 8rem);
   border-top: 1px solid var(--border);
@@ -761,7 +761,7 @@ footer p {
   font-weight: 300;
 }
 
-/* FADE IN */
+/* fade-in effect */
 .fade-in {
   opacity: 0;
   transform: translateY(18px);
@@ -769,7 +769,7 @@ footer p {
 }
 .fade-in.visible { opacity: 1; transform: translateY(0); }
 
-/* RESPONSIVE */
+/* adding responsiveness */
 @media (max-width: 700px) {
   .skills-layout { grid-template-columns: 1fr; }
 
@@ -824,7 +824,7 @@ footer p {
   main { padding-top: 124px; }
 }
 
-/* BACK TO TOP */
+/* back-to-top button */
 #back-to-top {
   position: fixed;
   bottom: 2rem;
@@ -861,7 +861,7 @@ footer p {
   pointer-events: auto;
 }
 
-/* CUSTOM CURSOR */
+/* for custom cursor which i still have not added yet because i still dont't know what should i use for the custom cursor... */
 #custom-cursor {
   position: fixed;
   width: 10px;
@@ -878,7 +878,7 @@ footer p {
   transform: scale(2.5);
 }
 
-/* CERT GRID */
+/* for the certifiction gird */
 .cert-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -913,7 +913,7 @@ footer p {
 
 .cert-badge-card a:hover { opacity: 0.75; }
 
-/* ABOUT */
+/* the about section */
 .about-inner {
   max-width: 620px;
 }
@@ -936,7 +936,7 @@ footer p {
 
 .about-link:hover { opacity: 0.8; }
 
-/* BLOG PAGE */
+/* My blog page */
 .page-intro {
   max-width: 640px;
   margin-bottom: 2.5rem;
@@ -1008,12 +1008,12 @@ footer p {
   background: rgba(91, 141, 238, 0.12);
 }
 
-/* SOUND TOGGLE MUTED STATE */
+/* sound toggle button (mute state) */
 #sound-toggle.sound-muted {
   opacity: 0.55;
 }
 
-/* CARD TOGGLE BUTTON */
+/* card toggle button */
 .card-toggle {
   display: inline-flex;
   align-items: center;
