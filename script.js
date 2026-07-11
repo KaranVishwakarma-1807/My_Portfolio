@@ -89,6 +89,9 @@ function initTypingAnimator(roles, typeSpeed, deleteSpeed, pauseMs) {
 
 // Fade-In transition effect on scroll
 let fadeObserver = null;
+let fadeMutationObserver = null;
+let timelineFadeObserver = null;
+let timelineFadeMutationObserver = null;
 
 function hexToRgb(hex) {
   const clean = hex.replace(/^#/, '');
@@ -101,10 +104,67 @@ function hexToRgb(hex) {
 
 function initFadeIn() {
   if (fadeObserver) fadeObserver.disconnect();
-  fadeObserver = new IntersectionObserver((entries) => {
-    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
-  }, { threshold: 0.1 });
-  document.querySelectorAll('.fade-in').forEach(el => fadeObserver.observe(el));
+  if (fadeMutationObserver) fadeMutationObserver.disconnect();
+
+  fadeObserver = new IntersectionObserver((entries, observer) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12 });
+
+  const observePending = () => {
+    document.querySelectorAll('.fade-in:not(.visible)').forEach((el) => {
+      if (!el.closest('.github-timeline')) {
+        fadeObserver.observe(el);
+      }
+    });
+  };
+
+  observePending();
+
+  if (document.body) {
+    fadeMutationObserver = new MutationObserver(() => {
+      observePending();
+    });
+    fadeMutationObserver.observe(document.body, { childList: true, subtree: true });
+  }
+}
+
+function initTimelineFadeIn() {
+  const timeline = document.getElementById('repo-timeline');
+  if (!timeline) return;
+
+  if (timelineFadeObserver) timelineFadeObserver.disconnect();
+  if (timelineFadeMutationObserver) timelineFadeMutationObserver.disconnect();
+
+  timelineFadeObserver = new IntersectionObserver((entries, observer) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, {
+    threshold: 0.12,
+    root: timeline,
+    rootMargin: '0px 0px 24px 0px',
+  });
+
+  const observePending = () => {
+    timeline.querySelectorAll('.repo-timeline-entry.fade-in:not(.visible)').forEach((el) => {
+      timelineFadeObserver.observe(el);
+    });
+  };
+
+  observePending();
+
+  timelineFadeMutationObserver = new MutationObserver(() => {
+    observePending();
+  });
+  timelineFadeMutationObserver.observe(timeline, { childList: true, subtree: true });
 }
 
 // Dark mode implementation
@@ -513,7 +573,9 @@ initCustomCursor();
 // page module function - to handle dynamic nav link highlighting for better UI/UX experience.
 function getPageKey(pathname) {
   const file = pathname.split('/').pop() || '';
-  return file === 'blogs.html' ? 'blogs' : 'home';
+  if (file === 'blogs.html') return 'blogs';
+  if (file === 'github-journey.html') return 'github-journey';
+  return 'home';
 }
 
 function updateNavActive() {
@@ -529,6 +591,147 @@ function updateNavActive() {
       blogsLink.setAttribute('aria-current', 'page');
     }
   }
+  if (page === 'github-journey') {
+    const journeyLink = document.querySelector('.nav-links a[href*="github-journey"]');
+    if (journeyLink) {
+      journeyLink.classList.add('is-active');
+      journeyLink.setAttribute('aria-current', 'page');
+    }
+  }
+}
+
+// === GITHUB JOURNEY TIMELINE ===
+function formatRepoDate(iso) {
+  if (!iso) return 'Date unknown';
+  return new Date(iso + 'T00:00:00').toLocaleDateString('en-GB', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  });
+}
+
+function getRepoYear(iso) {
+  if (!iso) return 'Collaborations';
+  return new Date(iso + 'T00:00:00').getFullYear().toString();
+}
+
+function renderRepoTimeline(container, repos) {
+  let lastYear = null;
+  const parts = [];
+
+  repos.forEach((repo, i) => {
+    const year = getRepoYear(repo.created);
+    if (year !== lastYear) {
+      parts.push(`<div class="timeline-year-divider" aria-hidden="true">${year}</div>`);
+      lastYear = year;
+    }
+    parts.push(`
+      <button class="timeline-entry repo-timeline-entry fade-in"
+              style="transition-delay: ${Math.min(i * 0.03, 0.6)}s"
+              data-repo-id="${repo.id}" role="option" aria-selected="false">
+        <div class="timeline-marker"></div>
+        <div class="timeline-content">
+          <div class="timeline-date">${formatRepoDate(repo.created)}</div>
+          <h3 class="timeline-institution">${repo.name}</h3>
+          <span class="repo-type-badge ${repo.type}">${repo.type}</span>
+        </div>
+      </button>
+    `);
+  });
+
+  container.innerHTML = parts.join('');
+}
+
+function renderRepoDetail(panel, repo) {
+  const typeLabel = repo.type.charAt(0).toUpperCase() + repo.type.slice(1);
+  panel.innerHTML = `
+    <div class="blog-meta">${formatRepoDate(repo.created)} · ${typeLabel} · ${repo.category}</div>
+    <h2>${repo.name}</h2>
+    <p class="repo-short">${repo.shortDescription}</p>
+    <div class="repo-about">
+      ${repo.about.map((p) => `<p>${p}</p>`).join('')}
+    </div>
+    <a href="${repo.url}" class="project-link" target="_blank" rel="noopener noreferrer">
+      View on GitHub
+      <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 11L11 2M5 2h6v6"/></svg>
+    </a>
+  `;
+}
+
+function selectRepo(repoId, { scrollDetail = false, updateHash = true } = {}) {
+  if (typeof GITHUB_REPOS === 'undefined') return;
+  const repo = GITHUB_REPOS.find((r) => r.id === repoId);
+  if (!repo) return;
+
+  document.querySelectorAll('.repo-timeline-entry').forEach((el) => {
+    const active = el.dataset.repoId === repoId;
+    el.classList.toggle('is-active', active);
+    el.setAttribute('aria-selected', String(active));
+  });
+
+  const panel = document.getElementById('repo-detail');
+  if (panel) renderRepoDetail(panel, repo);
+
+  if (updateHash && getPageKey(location.pathname) === 'github-journey') {
+    const newUrl = `${location.pathname}${location.search}#${repoId}`;
+    history.replaceState({ spa: true }, '', newUrl);
+  }
+
+  if (scrollDetail && window.matchMedia('(max-width: 900px)').matches) {
+    panel?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+
+function loadReposData() {
+  if (typeof GITHUB_REPOS !== 'undefined') return Promise.resolve();
+  return new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = 'repos-data.js';
+    script.onload = resolve;
+    script.onerror = reject;
+    document.head.appendChild(script);
+  });
+}
+
+let githubJourneyBound = false;
+
+function initGithubJourney() {
+  const timeline = document.getElementById('repo-timeline');
+  if (!timeline) return;
+
+  loadReposData()
+    .then(() => {
+      renderRepoTimeline(timeline, GITHUB_REPOS);
+      initTimelineFadeIn();
+
+      const hashId = location.hash.slice(1);
+      const defaultId = (hashId && GITHUB_REPOS.some((r) => r.id === hashId))
+        ? hashId
+        : GITHUB_REPOS.filter((r) => r.created).slice(-1)[0]?.id
+          || GITHUB_REPOS[0].id;
+      selectRepo(defaultId, { updateHash: !hashId });
+
+      initFadeIn();
+
+      if (!githubJourneyBound) {
+        githubJourneyBound = true;
+        timeline.addEventListener('click', (e) => {
+          const entry = e.target.closest('.repo-timeline-entry');
+          if (!entry) return;
+          selectRepo(entry.dataset.repoId, { scrollDetail: true });
+        });
+        window.addEventListener('hashchange', () => {
+          if (getPageKey(location.pathname) !== 'github-journey') return;
+          const id = location.hash.slice(1);
+          if (id && GITHUB_REPOS.some((r) => r.id === id)) {
+            selectRepo(id, { updateHash: false });
+          }
+        });
+      }
+    })
+    .catch(() => {
+      timeline.innerHTML = '<p class="repo-detail-placeholder">Could not load repository data.</p>';
+    });
 }
 
 function initPageModules() {
@@ -552,6 +755,7 @@ function initPageModules() {
   updateNavActive();
   syncSoundUIFromTrack();
   setTheme(html.getAttribute('data-theme') === 'dark');
+  initGithubJourney();
 }
 
 initFilterController();
@@ -564,7 +768,10 @@ function shouldSwapPage(url) {
 
 function fetchPageUrl(url) {
   const dir = location.pathname.substring(0, location.pathname.lastIndexOf('/') + 1);
-  return dir + (getPageKey(url.pathname) === 'blogs' ? 'blogs.html' : 'index.html');
+  const key = getPageKey(url.pathname);
+  if (key === 'blogs') return dir + 'blogs.html';
+  if (key === 'github-journey') return dir + 'github-journey.html';
+  return dir + 'index.html';
 }
 
 async function navigateToPage(url, { historyMode = 'push' } = {}) {
@@ -609,7 +816,7 @@ async function navigateToPage(url, { historyMode = 'push' } = {}) {
 
   initPageModules();
 
-  if (url.hash) {
+  if (url.hash && getPageKey(url.pathname) !== 'github-journey') {
     const target = document.querySelector(url.hash);
     if (target) target.scrollIntoView({ behavior: 'smooth' });
   } else {

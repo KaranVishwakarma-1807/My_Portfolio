@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Blogs — Karan Vishwakarma</title>
-<meta name="description" content="Notes on building Watch Party, hand-gesture recognition, Microsoft certifications, and lessons learned along the way."/>
+<title>GitHub Journey — Karan Vishwakarma</title>
+<meta name="description" content="An interactive timeline of 28 GitHub repositories — from Pygame games in 2024 to cloud apps, ML projects, and open source in 2026."/>
 
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
@@ -16,7 +16,7 @@
 </head>
 <body>
 
-<a href="#blogs" class="skip-to-main">Skip to main content</a>
+<a href="#github-journey" class="skip-to-main">Skip to main content</a>
 
 <div id="scroll-progress"></div>
 
@@ -27,8 +27,8 @@
     <li><a href="index.html#projects">Projects</a></li>
     <li><a href="index.html#skills">Skills</a></li>
     <li><a href="index.html#contact">Contact</a></li>
-    <li><a href="blogs.html" class="is-active" aria-current="page">Blogs</a></li>
-    <li><a href="github-journey.html">GitHub Journey</a></li>
+    <li><a href="blogs.html">Blogs</a></li>
+    <li><a href="github-journey.html" class="is-active" aria-current="page">GitHub Journey</a></li>
   </ul>
   <div class="nav-controls">
     <button id="sound-toggle" aria-label="Toggle sound effects">
@@ -45,43 +45,22 @@
 <audio id="background-music" src="assets/audio/cozy-loop.mp3" type="audio/mpeg" loop preload="auto"></audio>
 
 <main>
-  <section id="blogs" class="fade-in">
-    <div class="section-label">Blogs</div>
+  <section id="github-journey" class="fade-in">
+    <div class="section-label">GitHub Journey</div>
+
     <div class="page-intro">
-      <h1>Process &amp; experience</h1>
-      <p>Short write-ups on what I built, what went wrong, and what I'd do differently. These mirror the projects on my portfolio—not polished tutorials, just honest notes from the build.</p>
+      <h1>From first commit to Ninjo</h1>
+      <p>28 repositories in chronological order — games, machine learning, web apps, browser extensions, and collaborations. Click any node on the timeline to read about that project.</p>
     </div>
 
-    <div class="blog-list">
+    <div class="github-journey-layout">
+      <div class="timeline github-timeline" id="repo-timeline" role="listbox" aria-label="Repository timeline">
+        <!-- Populated by script.js -->
+      </div>
 
-      <article class="blog-card fade-in">
-        <div class="blog-meta">Cloud · 2025</div>
-        <h2>Shipping Watch Party on Azure</h2>
-        <p>The idea started simple: friends watch the same video at the same time. The hard part was playback sync when everyone's network and device behaved differently.</p>
-        <p>I leaned on Socket.IO for room state and events, Azure Blob for assets, and Metered for voice/video. The biggest lesson was designing reconnect flows—users drop Wi‑Fi mid-movie more often than you'd expect. Deploying to Azure Web Apps taught me to treat environment config and logging as part of the feature, not an afterthought.</p>
+      <article class="repo-detail blog-card fade-in" id="repo-detail" aria-live="polite">
+        <p class="repo-detail-placeholder">Select a repository from the timeline.</p>
       </article>
-
-      <article class="blog-card fade-in">
-        <div class="blog-meta">AI / Open Source · 2025</div>
-        <h2>Building the Hand Gesture Engine</h2>
-        <p>MediaPipe gave me landmarks quickly, but turning raw points into reliable gestures across lighting and hand sizes took iteration. I focused on configurable thresholds so others could tune behavior without forking the whole library.</p>
-        <p>Packaging for PyPI was its own project—README clarity, version bumps, and making the API feel predictable mattered as much as the CV logic. Publishing open source pushed me to write code I'd be comfortable maintaining, not just demo scripts.</p>
-      </article>
-
-      <article class="blog-card fade-in">
-        <div class="blog-meta">Android · 2024</div>
-        <h2>Slide Puzzle — touch, state, and polish</h2>
-        <p>Game logic was straightforward; UX wasn't. Invalid moves had to feel impossible without lag, and the board needed to stay readable on smaller screens. Kotlin plus ConstraintLayout kept layout predictable while I experimented with touch handling.</p>
-        <p>Finishing a small app end-to-end—logic, UI, and edge cases—gave me more confidence than reading another chapter on Android theory alone.</p>
-      </article>
-
-      <article class="blog-card fade-in">
-        <div class="blog-meta">Learning · 2023–2025</div>
-        <h2>Six Microsoft certs alongside a CS degree</h2>
-        <p>The IEP track at Parul lined up with Azure fundamentals, then AI and data certs. Studying for exams while building real projects (Watch Party, gesture engine) meant concepts stuck—Blob Storage wasn't abstract after I'd debugged uploads at 2 a.m.</p>
-        <p>The experience wasn't about collecting badges. It was learning to read docs, fail practice exams, and connect certification topics to code I was already writing. That rhythm—study, build, ship—is how I want to keep growing.</p>
-      </article>
-
     </div>
 
     <p class="blog-back fade-in"><a href="index.html#projects" class="about-link">← Back to portfolio</a></p>
@@ -101,6 +80,7 @@
 
 <div id="custom-cursor"></div>
 
+<script src="repos-data.js"></script>
 <script src="script.js"></script>
 </body>
 </html>
