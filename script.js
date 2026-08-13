@@ -197,15 +197,15 @@ let heroCleanup = null;
 function initHeroCanvas() {
   if (heroCleanup) heroCleanup();
 
-  const canvas = document.getElementById('hero-canvas');
+  const canvas = document.querySelector('#hero-canvas, #blogs-canvas, #github-journey-canvas');
   if (!canvas) return;
 
-  const hero = document.getElementById('hero');
+  const animationContainer = canvas.parentElement;
 
   function applyStaticFallback() {
     canvas.remove();
-    if (hero) {
-      hero.style.background =
+    if (animationContainer) {
+      animationContainer.style.background =
         'linear-gradient(135deg, var(--accent-light) 0%, var(--bg) 60%)';
     }
   }
@@ -284,6 +284,7 @@ function hexToRgb(hex) {
 
   // Shooting star state
   const shootingStars = [];
+  let shootingStarTimeout = null;
 
   function spawnShootingStar() {
     const startX = canvasWidth; // start at right edge
@@ -297,7 +298,7 @@ function hexToRgb(hex) {
       created: performance.now(),
     });
     const nextDelay = Math.random() * (SHOOTING_STAR_MAX_INTERVAL - SHOOTING_STAR_MIN_INTERVAL) + SHOOTING_STAR_MIN_INTERVAL;
-    setTimeout(spawnShootingStar, nextDelay);
+    shootingStarTimeout = window.setTimeout(spawnShootingStar, nextDelay);
   }
 
   // Start first shooting star after initial delay
@@ -366,7 +367,7 @@ function hexToRgb(hex) {
 
   draw();
 
-  const heroObserver = new IntersectionObserver(
+  const canvasObserver = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
@@ -379,12 +380,13 @@ function hexToRgb(hex) {
     },
     { threshold: 0 }
   );
-  if (hero) heroObserver.observe(hero);
+  if (animationContainer) canvasObserver.observe(animationContainer);
 
   heroCleanup = () => {
     if (animFrameId) cancelAnimationFrame(animFrameId);
     window.removeEventListener('resize', resizeCanvas);
-    heroObserver.disconnect();
+    if (shootingStarTimeout) clearTimeout(shootingStarTimeout);
+    canvasObserver.disconnect();
     heroCleanup = null;
   };
 }

@@ -272,6 +272,28 @@ section { padding: 5rem clamp(1.5rem, 8vw, 8rem); }
   height: 100%;
 }
 
+/* Secondary-page shooting-star canvases */
+#blogs,
+#github-journey {
+  position: relative;
+  overflow: hidden;
+}
+
+#blogs-canvas,
+#github-journey-canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+}
+
+#blogs > :not(#blogs-canvas),
+#github-journey > :not(#github-journey-canvas) {
+  position: relative;
+  z-index: 1;
+}
+
 .hero-content {
   position: relative;
   z-index: 1;
@@ -1051,7 +1073,7 @@ footer p {
 .card-detail strong { color: var(--text-primary); font-weight: 500; }
 
 /* GitHub journey timeline page */
-#github-journey { background: var(--surface); }
+#github-journey { background: var(--bg); }
 
 .github-journey-layout {
   display: grid;
