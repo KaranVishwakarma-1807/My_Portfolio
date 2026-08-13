@@ -151,7 +151,7 @@ function initTimelineFadeIn() {
   }, {
     threshold: 0.12,
     root: scrollContainer,
-    rootMargin: '0px 0px 24px 0px',
+    rootMargin: '0px 24px 0px 0px',
   });
 
   const observePending = () => {
@@ -713,6 +713,10 @@ function initGithubJourney() {
         : GITHUB_REPOS.filter((r) => r.created).slice(-1)[0]?.id
           || GITHUB_REPOS[0].id;
       selectRepo(defaultId, { updateHash: !hashId });
+      timeline.querySelector(`[data-repo-id="${defaultId}"]`)?.scrollIntoView({
+        block: 'nearest',
+        inline: 'center',
+      });
 
       initFadeIn();
 
