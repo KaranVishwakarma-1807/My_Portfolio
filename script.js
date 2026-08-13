@@ -136,6 +136,7 @@ function initFadeIn() {
 function initTimelineFadeIn() {
   const timeline = document.getElementById('repo-timeline');
   if (!timeline) return;
+  const scrollContainer = timeline.closest('.github-timeline-scroll') || timeline;
 
   if (timelineFadeObserver) timelineFadeObserver.disconnect();
   if (timelineFadeMutationObserver) timelineFadeMutationObserver.disconnect();
@@ -149,7 +150,7 @@ function initTimelineFadeIn() {
     });
   }, {
     threshold: 0.12,
-    root: timeline,
+    root: scrollContainer,
     rootMargin: '0px 0px 24px 0px',
   });
 

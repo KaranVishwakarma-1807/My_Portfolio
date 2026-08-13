@@ -1060,7 +1060,7 @@ footer p {
   align-items: start;
 }
 
-.github-timeline {
+.github-timeline-scroll {
   max-height: 72vh;
   overflow-y: auto;
   padding-right: 0.5rem;
@@ -1068,8 +1068,8 @@ footer p {
   scrollbar-color: var(--border) transparent;
 }
 
-.github-timeline::-webkit-scrollbar { width: 5px; }
-.github-timeline::-webkit-scrollbar-thumb {
+.github-timeline-scroll::-webkit-scrollbar { width: 5px; }
+.github-timeline-scroll::-webkit-scrollbar-thumb {
   background: var(--border);
   border-radius: 4px;
 }
@@ -1176,7 +1176,7 @@ footer p {
     grid-template-columns: 1fr;
   }
 
-  .github-timeline {
+  .github-timeline-scroll {
     max-height: none;
     overflow-y: visible;
     padding-right: 0;
